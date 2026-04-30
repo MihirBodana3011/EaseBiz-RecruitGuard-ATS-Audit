@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EaseBiz - Candidate Validation</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- SheetJS for Excel processing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <img src="/easebiz_logo.png" alt="EaseBiz Logo" class="brand-logo">
+            </div>
+            <p class="subtitle">AI-Powered Talent Data & Candidate Audit Platform</p>
+        </header>
+
+        <main>
+            <div class="upload-section card" id="drop-zone">
+                <input type="file" id="file-input" accept=".xlsx, .xls, .csv" hidden>
+                <div class="upload-content">
+                    <div class="upload-icon-container">
+                        <!-- Recruiting/Resume Icon -->
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><circle cx="10" cy="9" r="2"></circle></svg>
+                    </div>
+                    <h3>Upload Candidate Database</h3>
+                    <p>Drag & drop or <span class="browse-text">browse</span> to begin audit</p>
+                    <p class="file-hint">Supports .xlsx, .xls, and .csv files up to 50,000 candidates</p>
+                </div>
+            </div>
+
+            <div id="preview-section" class="card hidden">
+                <div class="card-header">
+                    <h3>Data Preview <span class="badge">First 20 Rows</span></h3>
+                    <div class="file-info">
+                        <span id="file-name-display">filename.xlsx</span>
+                        <span id="row-count-display">0 rows</span>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="preview-table">
+                        <thead><tr id="preview-header"></tr></thead>
+                        <tbody id="preview-body"></tbody>
+                    </table>
+                </div>
+                <div class="actions">
+                    <button id="reset-btn" class="btn secondary">Change File</button>
+                    <button id="process-btn" class="btn primary">Process Data</button>
+                </div>
+            </div>
+
+            <div id="status-section" class="card hidden">
+                <div class="status-content">
+                    <div class="spinner"></div>
+                    <h3>Processing Candidates...</h3>
+                    <p>Generating validation sheets and recruiting audit reports</p>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="result-section" class="card hidden">
+                <div class="success-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+                <h2>Audit Complete!</h2>
+                <p>Your multi-sheet candidate validation report is ready for download.</p>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Candidates</span>
+                        <span class="stat-value" id="stat-total">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Issues Found</span>
+                        <span class="stat-value warning" id="stat-issues">0</span>
+                    </div>
+                </div>
+                
+                <!-- Detailed Breakdown Section -->
+                <div id="breakdown-section" class="hidden">
+                    <h3 class="breakdown-title">Detailed Audit Report</h3>
+                    <div class="breakdown-grid" id="breakdown-grid">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button id="download-btn" class="btn primary large">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Download Audit Report
+                    </button>
+                    <button id="new-audit-btn" class="btn text">Start New Audit</button>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 EaseBiz. Secure, client-side data processing.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
