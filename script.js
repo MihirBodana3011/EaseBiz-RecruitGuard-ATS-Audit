@@ -73,8 +73,18 @@ document.addEventListener('DOMContentLoaded', () => {
         currentFile = file;
         const fd = new FormData(); fd.append('file', file);
         try {
-            const res  = await fetch(`${API}/upload`, { method: 'POST', body: fd });
-            const data = await res.json();
+            const res = await fetch(`${API}/upload`, { method: 'POST', body: fd });
+            // Safe JSON parse: agar server HTML error return kare toh clear message dikhao
+            const text = await res.text();
+            let data;
+            try { data = JSON.parse(text); }
+            catch (_) {
+                throw new Error(
+                    res.ok
+                        ? `Server returned unexpected response (not JSON). Check if the server is running properly.`
+                        : `Server error ${res.status}: ${text.substring(0, 300)}`
+                );
+            }
             if (data.error) throw new Error(data.error);
             showPreview(data);
         } catch(err) { alert(`Upload error: ${err.message}`); resetApp(); }
@@ -160,8 +170,17 @@ document.addEventListener('DOMContentLoaded', () => {
         fd.append('validation_config', JSON.stringify(validationConfig));
 
         try {
-            const res  = await fetch(`${API}/process`, { method: 'POST', body: fd });
-            const data = await res.json();
+            const res = await fetch(`${API}/process`, { method: 'POST', body: fd });
+            const text = await res.text();
+            let data;
+            try { data = JSON.parse(text); }
+            catch (_) {
+                throw new Error(
+                    res.ok
+                        ? `Server returned unexpected response (not JSON).`
+                        : `Server error ${res.status}: ${text.substring(0, 300)}`
+                );
+            }
             if (data.error) throw new Error(data.error);
             currentJobId = data.job_id;
             listenToStream(currentJobId);

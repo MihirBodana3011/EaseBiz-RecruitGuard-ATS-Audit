@@ -16,6 +16,16 @@ from openpyxl.utils.dataframe import dataframe_to_rows
 app = Flask(__name__)
 CORS(app, expose_headers=['X-Audit-Stats'])
 
+# ── Always return JSON errors, never HTML pages ──
+@app.errorhandler(400)
+def bad_request(e):  return jsonify(error=str(e)), 400
+@app.errorhandler(404)
+def not_found(e):    return jsonify(error='Endpoint not found'), 404
+@app.errorhandler(405)
+def method_not_allowed(e): return jsonify(error='Method not allowed'), 405
+@app.errorhandler(500)
+def internal_error(e): return jsonify(error=f'Internal server error: {e}'), 500
+
 # In-memory job store: job_id -> {status, progress, step, message, result_bytes, stats, filename}
 jobs = {}
 
@@ -776,6 +786,9 @@ def download_result(job_id):
         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
 
+
+@app.route('/health')
+def health(): return jsonify({'status': 'ok', 'message': 'EaseBiz RecruitGuard is running'})
 
 @app.route('/')
 def index(): return send_file('index.html')
