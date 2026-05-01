@@ -1,47 +1,37 @@
-# EaseBiz RecruitGuard — ATS Audit Platform
+# EaseBiz RecruitGuard - ATS Data Audit Platform
 
-AI-Powered Talent Data & Candidate Audit Platform.
+![EaseBiz Logo](easebiz_logo.png)
 
----
+## Overview
+**EaseBiz RecruitGuard** is a high-performance, enterprise-grade ATS data audit and validation platform. Built for professional recruitment teams, it ensures 100% data integrity by strictly validating candidate records, mobile numbers, and critical fields like Skills, Experience, and Location.
 
-## 🚀 Deploy via GitHub → Railway (One-Time Setup, Then Pure GitHub)
+## Key Features
+- **Strict Mobile Validation**: Specialized logic for Indian mobile numbers, blocking dummy sequences (123456...) and repeating digits.
+- **Multi-Number Extraction**: Automatically splits multiple numbers in a single cell into separate columns.
+- **Dynamic Checkpoints**: Automatically detects and validates columns like Gender, Skills, Designation, Experience, and Location.
+- **Detailed Audit Reports**: Generates a consolidated Excel report with a granular breakdown of every record.
+- **Premium UI**: Modern glassmorphic interface with real-time audit stats and breakdown cards.
+- **Crash-Proof**: Automatic filtering of illegal characters to prevent Excel file corruption.
 
-### Sirf ek baar 2 minute ka setup — uske baad sirf `git push` karo!
+## Tech Stack
+- **Backend**: Python, Flask, Pandas, Openpyxl
+- **Frontend**: HTML5, CSS3 (Vanilla), JavaScript (ES6+)
+- **Design**: Glassmorphism, 4D Aesthetics, Custom Animations
 
-**Step 1:** [railway.app](https://railway.app) pe jao → **"Login with GitHub"** ✅
+## Installation & Setup
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/MihirBodana3011/EaseBiz-RecruitGuard-ATS-Audit.git
+   ```
+2. Install dependencies:
+   ```bash
+   pip install flask flask-cors pandas openpyxl
+   ```
+3. Run the application:
+   ```bash
+   python app.py
+   ```
+4. Open your browser and navigate to `http://localhost:5000`
 
-**Step 2:** **"New Project"** → **"Deploy from GitHub repo"** click karo ✅
-
-**Step 3:** Apna GitHub repo select karo → **Deploy** ✅
-
-**Step 4:** Done! Live URL mil gayi 🎉
-
-### ✅ Uske baad hamesha ke liye:
-```bash
-git add .
-git commit -m "your change"
-git push
-```
-**→ Railway automatically redeploy kar deta hai. Kabhi Railway pe jaana nahi padta!**
-
----
-
-## Features
-
-- 📁 Upload `.xlsx`, `.xls`, `.csv` (50,000+ candidates)
-- 👀 Live data preview
-- 🗂️ Smart column auto-mapping
-- ✅ Configurable validation toggles
-- 📊 Real-time progress (SSE streaming)
-- 📥 Color-coded Excel report download
-
-## Local Development
-
-```bash
-pip install -r requirements.txt
-python app.py
-# Runs on http://localhost:5000
-```
-
----
-© 2026 EaseBiz. All rights reserved.
+## License
+&copy; 2026 EaseBiz. All Rights Reserved.
