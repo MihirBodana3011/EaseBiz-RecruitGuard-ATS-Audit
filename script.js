@@ -511,8 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const roleProfileMatch = nameString.match(NAME_ROLE_PROFILE_RE);
         if (roleProfileMatch) {
-            const matchedTerm = formatNameKeyword(roleProfileMatch[2]);
-            return `Contains Designation/Profile/Role/Industry: ${matchedTerm}`;
+            return 'Contains Designation/Profile/Role/Industry';
         }
 
         return null;

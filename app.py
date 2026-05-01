@@ -189,8 +189,7 @@ def is_irrelevant_name(name):
 
     role_profile_match = RE_NAME_ROLE_PROFILE.search(name_str)
     if role_profile_match:
-        matched_term = format_name_keyword(role_profile_match.group(0))
-        return f"Contains Designation/Profile/Role/Industry: {matched_term}"
+        return "Contains Designation/Profile/Role/Industry"
         
     return None
 
