@@ -24,6 +24,108 @@ ILLEGAL_CHARACTERS_RE = re.compile(r'[\000-\010]|[\013-\014]|[\016-\037]')
 RE_EMAIL_FORMAT = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
 RE_NAME_SPAM = re.compile(r'(.)\1{4,}')
 RE_NAME_STARTS_WITH_NUM = re.compile(r'^\d')
+NAME_ROLE_PROFILE_TERMS = [
+    # Generic profile/designation words
+    'profile', 'resume', 'cv', 'candidate', 'job', 'opening', 'vacancy',
+    'walkin', 'walk-in', 'fresher', 'experienced', 'experience', 'exp',
+    'male', 'female', 'senior', 'junior', 'lead', 'head', 'chief',
+    'manager', 'assistant manager', 'deputy manager', 'general manager',
+    'executive', 'senior executive', 'officer', 'coordinator', 'incharge',
+    'in-charge', 'supervisor', 'team leader', 'associate', 'specialist',
+    'consultant', 'analyst', 'trainee', 'intern', 'internship',
+    'apprentice', 'director', 'founder', 'co founder', 'co-founder',
+    'owner', 'partner', 'president', 'vice president', 'vp', 'ceo', 'cfo',
+    'coo', 'cto', 'cmo', 'chro',
+
+    # HR, recruitment, sales, marketing, and customer roles
+    'hr', 'human resource', 'human resources', 'recruiter', 'recruitment',
+    'talent acquisition', 'hr executive', 'hr manager', 'hr recruiter',
+    'sales', 'sales executive', 'sales manager', 'field sales',
+    'area sales manager', 'regional sales manager', 'territory sales',
+    'business development', 'business development executive',
+    'business development manager', 'bd', 'bde', 'bdm', 'marketing',
+    'marketing executive', 'marketing manager', 'digital marketing',
+    'seo', 'social media', 'telecaller', 'telesales', 'inside sales',
+    'customer support', 'customer care', 'customer service',
+    'relationship manager', 'client servicing', 'account manager',
+    'key account manager', 'front office', 'receptionist', 'counsellor',
+    'counselor',
+
+    # Technology, data, and product roles
+    'it', 'software', 'developer', 'engineer', 'software engineer',
+    'software developer', 'programmer', 'web developer', 'frontend',
+    'front end', 'backend', 'back end', 'full stack', 'fullstack',
+    'java developer', 'python developer', 'php developer',
+    'dot net developer', '.net developer', 'react developer',
+    'angular developer', 'node developer', 'android developer',
+    'ios developer', 'mobile developer', 'devops', 'cloud engineer',
+    'network engineer', 'system administrator', 'database administrator',
+    'dba', 'data entry', 'data operator', 'data analyst',
+    'business analyst', 'data scientist', 'data engineer', 'mis',
+    'mis executive', 'qa', 'qc', 'tester', 'test engineer',
+    'software tester', 'automation tester', 'quality analyst',
+    'product manager', 'project manager', 'scrum master',
+
+    # Finance, accounting, legal, and office roles
+    'finance', 'financial analyst', 'account', 'accounts', 'accountant',
+    'account executive', 'accounts executive', 'accounts manager',
+    'account assistant', 'audit', 'auditor', 'tax', 'taxation', 'gst',
+    'tally', 'sap', 'erp', 'payroll', 'banker', 'banking', 'insurance',
+    'ca', 'cs', 'cma', 'admin', 'administration', 'admin executive',
+    'office assistant', 'back office', 'back office executive',
+    'legal', 'lawyer', 'advocate', 'company secretary',
+
+    # Operations, manufacturing, engineering, and trade roles
+    'operations', 'operation', 'production', 'maintenance', 'quality',
+    'quality control', 'quality engineer', 'purchase', 'procurement',
+    'supply chain', 'logistics', 'warehouse', 'store', 'store keeper',
+    'store incharge', 'inventory', 'dispatch', 'plant', 'operator',
+    'machine operator', 'technician', 'fitter', 'welder', 'electrician',
+    'plumber', 'mechanic', 'mechanical engineer', 'electrical engineer',
+    'civil engineer', 'site engineer', 'service engineer',
+    'design engineer', 'architect', 'interior designer', 'draftsman',
+    'draughtsman',
+
+    # Healthcare, education, creative, hospitality, retail, and field roles
+    'doctor', 'nurse', 'pharmacist', 'physiotherapist', 'lab technician',
+    'medical representative', 'teacher', 'faculty', 'professor',
+    'lecturer', 'trainer', 'academic', 'graphic designer', 'ui designer',
+    'ux designer', 'ui ux designer', 'video editor', 'content writer',
+    'copywriter', 'chef', 'cook', 'steward', 'housekeeping', 'cashier',
+    'retail', 'store manager', 'security guard', 'driver', 'delivery',
+    'courier',
+
+    # Common industry/domain names that should not be in a candidate name
+    'manufacturing', 'pharma', 'pharmaceutical', 'healthcare', 'hospital',
+    'education', 'automobile', 'automotive', 'construction',
+    'real estate', 'telecom', 'fmcg', 'chemical', 'textile', 'garment',
+    'jewellery', 'jewelry', 'hospitality', 'hotel', 'restaurant',
+    'travel', 'tourism', 'import export', 'export', 'agriculture',
+    'food', 'beverage', 'ecommerce', 'e-commerce', 'fintech', 'ites',
+    'bpo', 'kpo', 'media', 'advertising', 'oil', 'gas', 'energy',
+    'power', 'solar', 'steel', 'cement', 'plastic', 'packaging',
+    'printing', 'mba', 'mca', 'btech', 'b.tech', 'mtech', 'm.tech',
+    'diploma', 'iti'
+]
+RE_NAME_ROLE_PROFILE = re.compile(
+    r'(?<![a-z0-9])(?:' +
+    '|'.join(re.escape(term) for term in sorted(set(NAME_ROLE_PROFILE_TERMS), key=len, reverse=True)) +
+    r')(?![a-z0-9])',
+    re.IGNORECASE
+)
+NAME_KEYWORD_ACRONYMS = {
+    'bd', 'bde', 'bdm', 'bpo', 'ca', 'ceo', 'cfo', 'chro', 'cma', 'cmo',
+    'coo', 'cs', 'cto', 'cv', 'dba', 'erp', 'fmcg', 'gst', 'hr', 'ios',
+    'it', 'ites', 'iti', 'kpo', 'mba', 'mca', 'mis', 'qa', 'qc', 'sap',
+    'seo', 'ui', 'ux', 'vp'
+}
+
+def format_name_keyword(keyword):
+    parts = re.split(r'(\W+)', keyword.strip())
+    return ''.join(
+        part.upper() if part.lower() in NAME_KEYWORD_ACRONYMS else part.title()
+        for part in parts
+    )
 
 def clean_phone_numbers(mobile_str):
     if pd.isna(mobile_str) or str(mobile_str).strip().lower() == 'nan' or not str(mobile_str).strip():
@@ -84,6 +186,11 @@ def is_irrelevant_name(name):
     irrelevant_terms = ['test', 'abc', 'xyz', 'na', 'n/a', 'unknown', 'null', 'none', '---', '...', '.', 'dummy']
     if name_str in irrelevant_terms:
         return "Irrelevant Term"
+
+    role_profile_match = RE_NAME_ROLE_PROFILE.search(name_str)
+    if role_profile_match:
+        matched_term = format_name_keyword(role_profile_match.group(0))
+        return f"Contains Designation/Profile/Role/Industry: {matched_term}"
         
     return None
 
