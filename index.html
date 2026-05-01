@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EaseBiz - Candidate Validation</title>
+    <link rel="icon" href="easebiz_logo.png">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,11 +12,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- SheetJS for Excel processing -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="vendor/xlsx.full.min.js"></script>
+    <script src="vendor/exceljs.min.js"></script>
+    <script src="validation-rules.js"></script>
 </head>
 <body>
     <div class="app-container">
@@ -68,6 +67,7 @@
                     <div class="progress-bar-container">
                         <div class="progress-bar" id="progress-bar"></div>
                     </div>
+                    <p class="progress-message" id="progress-message">Preparing audit...</p>
                 </div>
             </div>
 
@@ -89,6 +89,8 @@
                     </div>
                 </div>
                 
+                <div class="issue-summary hidden" id="issue-summary"></div>
+
                 <!-- Detailed Breakdown Section -->
                 <div id="breakdown-section" class="hidden">
                     <h3 class="breakdown-title">Detailed Audit Report</h3>

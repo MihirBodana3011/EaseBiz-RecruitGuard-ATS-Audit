@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileNameDisplay = document.getElementById('file-name-display');
     const rowCountDisplay = document.getElementById('row-count-display');
     const progressBar = document.getElementById('progress-bar');
+    const progressMessage = document.getElementById('progress-message');
 
     const processBtn = document.getElementById('process-btn');
     const resetBtn = document.getElementById('reset-btn');
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const statTotal = document.getElementById('stat-total');
     const statIssues = document.getElementById('stat-issues');
+    const issueSummary = document.getElementById('issue-summary');
     const breakdownSection = document.getElementById('breakdown-section');
     const breakdownGrid = document.getElementById('breakdown-grid');
 
@@ -33,82 +35,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const RE_NAME_STARTS_WITH_NUM = /^\d/;
     const ILLEGAL_CHARACTERS_RE = /[\x00-\x08\x0B-\x0C\x0E-\x1F]/g;
 
-    const NAME_ROLE_PROFILE_TERMS = [
-        'profile', 'resume', 'cv', 'candidate', 'job', 'opening', 'vacancy',
-        'walkin', 'walk-in', 'fresher', 'experienced', 'experience', 'exp',
-        'male', 'female', 'senior', 'junior', 'lead', 'head', 'chief',
-        'manager', 'assistant manager', 'deputy manager', 'general manager',
-        'executive', 'senior executive', 'officer', 'coordinator', 'incharge',
-        'in-charge', 'supervisor', 'team leader', 'associate', 'specialist',
-        'consultant', 'analyst', 'trainee', 'intern', 'internship',
-        'apprentice', 'director', 'founder', 'co founder', 'co-founder',
-        'owner', 'partner', 'president', 'vice president', 'vp', 'ceo', 'cfo',
-        'coo', 'cto', 'cmo', 'chro',
-        'hr', 'human resource', 'human resources', 'recruiter', 'recruitment',
-        'talent acquisition', 'hr executive', 'hr manager', 'hr recruiter',
-        'sales', 'sales executive', 'sales manager', 'field sales',
-        'area sales manager', 'regional sales manager', 'territory sales',
-        'business development', 'business development executive',
-        'business development manager', 'bd', 'bde', 'bdm', 'marketing',
-        'marketing executive', 'marketing manager', 'digital marketing',
-        'seo', 'social media', 'telecaller', 'telesales', 'inside sales',
-        'customer support', 'customer care', 'customer service',
-        'relationship manager', 'client servicing', 'account manager',
-        'key account manager', 'front office', 'receptionist', 'counsellor',
-        'counselor',
-        'it', 'software', 'developer', 'engineer', 'software engineer',
-        'software developer', 'programmer', 'web developer', 'frontend',
-        'front end', 'backend', 'back end', 'full stack', 'fullstack',
-        'java developer', 'python developer', 'php developer',
-        'dot net developer', '.net developer', 'react developer',
-        'angular developer', 'node developer', 'android developer',
-        'ios developer', 'mobile developer', 'devops', 'cloud engineer',
-        'network engineer', 'system administrator', 'database administrator',
-        'dba', 'data entry', 'data operator', 'data analyst',
-        'business analyst', 'data scientist', 'data engineer', 'mis',
-        'mis executive', 'qa', 'qc', 'tester', 'test engineer',
-        'software tester', 'automation tester', 'quality analyst',
-        'product manager', 'project manager', 'scrum master',
-        'finance', 'financial analyst', 'account', 'accounts', 'accountant',
-        'account executive', 'accounts executive', 'accounts manager',
-        'account assistant', 'audit', 'auditor', 'tax', 'taxation', 'gst',
-        'tally', 'sap', 'erp', 'payroll', 'banker', 'banking', 'insurance',
-        'ca', 'cs', 'cma', 'admin', 'administration', 'admin executive',
-        'office assistant', 'back office', 'back office executive',
-        'legal', 'lawyer', 'advocate', 'company secretary',
-        'operations', 'operation', 'production', 'maintenance', 'quality',
-        'quality control', 'quality engineer', 'purchase', 'procurement',
-        'supply chain', 'logistics', 'warehouse', 'store', 'store keeper',
-        'store incharge', 'inventory', 'dispatch', 'plant', 'operator',
-        'machine operator', 'technician', 'fitter', 'welder', 'electrician',
-        'plumber', 'mechanic', 'mechanical engineer', 'electrical engineer',
-        'civil engineer', 'site engineer', 'service engineer',
-        'design engineer', 'architect', 'interior designer', 'draftsman',
-        'draughtsman',
-        'doctor', 'nurse', 'pharmacist', 'physiotherapist', 'lab technician',
-        'medical representative', 'teacher', 'faculty', 'professor',
-        'lecturer', 'trainer', 'academic', 'graphic designer', 'ui designer',
-        'ux designer', 'ui ux designer', 'video editor', 'content writer',
-        'copywriter', 'chef', 'cook', 'steward', 'housekeeping', 'cashier',
-        'retail', 'store manager', 'security guard', 'driver', 'delivery',
-        'courier',
-        'manufacturing', 'pharma', 'pharmaceutical', 'healthcare', 'hospital',
-        'education', 'automobile', 'automotive', 'construction',
-        'real estate', 'telecom', 'fmcg', 'chemical', 'textile', 'garment',
-        'jewellery', 'jewelry', 'hospitality', 'hotel', 'restaurant',
-        'travel', 'tourism', 'import export', 'export', 'agriculture',
-        'food', 'beverage', 'ecommerce', 'e-commerce', 'fintech', 'ites',
-        'bpo', 'kpo', 'media', 'advertising', 'oil', 'gas', 'energy',
-        'power', 'solar', 'steel', 'cement', 'plastic', 'packaging',
-        'printing', 'mba', 'mca', 'btech', 'b.tech', 'mtech', 'm.tech',
-        'diploma', 'iti'
-    ];
-    const NAME_KEYWORD_ACRONYMS = new Set([
-        'bd', 'bde', 'bdm', 'bpo', 'ca', 'ceo', 'cfo', 'chro', 'cma', 'cmo',
-        'coo', 'cs', 'cto', 'cv', 'dba', 'erp', 'fmcg', 'gst', 'hr', 'ios',
-        'it', 'ites', 'iti', 'kpo', 'mba', 'mca', 'mis', 'qa', 'qc', 'sap',
-        'seo', 'ui', 'ux', 'vp'
-    ]);
+    const RULES = window.EASEBIZ_VALIDATION_RULES || {};
+    const COLUMN_ALIASES = RULES.columnAliases || {};
+    const MISSING_VALUES = new Set((RULES.missingValues || ['', 'nan', 'null', 'none', 'n/a']).map(normalizeTerm));
+    const IRRELEVANT_NAME_TERMS = new Set((RULES.irrelevantNameTerms || []).map(normalizeTerm));
+    const IGNORED_ROLE_PROFILE_TERMS = new Set((RULES.ignoredRoleProfileTerms || []).map(normalizeTerm));
+    const ROLE_PROFILE_RESULT_LABEL = RULES.roleProfileResultLabel || 'Contains Designation/Profile/Role/Industry';
+    const NAME_ROLE_PROFILE_TERMS = RULES.roleProfileTerms || [];
+    const PROCESSING_CHUNK_SIZE = Number(RULES.processingChunkSize) || 1000;
     const NAME_ROLE_PROFILE_RE = buildNameRoleProfileRegex();
 
     let currentFile = null;
@@ -143,7 +77,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function handleFile(file) {
         if (!window.XLSX) {
-            alert('Excel engine load nahi hua. Please internet connection check karke page refresh karo.');
+            showError('Excel reader is not available. Please refresh the page and try again.');
+            return;
+        }
+
+        if (!/\.(csv|xlsx|xls)$/i.test(file.name)) {
+            showError('Please upload a .csv, .xlsx, or .xls candidate file.');
             return;
         }
 
@@ -152,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentData = await parseWorkbook(file);
             showPreview(currentData);
         } catch (err) {
-            alert(`Error reading file: ${err.message}`);
+            showError(`Could not read this file. ${err.message}`);
             resetApp();
         }
     }
@@ -166,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (!workbook.SheetNames.length) {
-            throw new Error('No worksheet found in this file');
+            throw new Error('No worksheet was found.');
         }
 
         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -176,18 +115,27 @@ document.addEventListener('DOMContentLoaded', () => {
             raw: false
         });
 
-        if (!rows.length) {
-            throw new Error('File is blank');
+        const headerRowIndex = rows.findIndex((row) => row.some((cell) => cleanCellValue(cell) !== ''));
+        if (headerRowIndex === -1) {
+            throw new Error('The file is blank.');
         }
 
-        const columns = makeUniqueHeaders(rows[0]);
-        const records = rows.slice(1).map((row) => {
+        const columns = makeUniqueHeaders(rows[headerRowIndex]);
+        if (!columns.length) {
+            throw new Error('The first non-empty row must contain column names.');
+        }
+
+        const records = rows.slice(headerRowIndex + 1).map((row) => {
             const record = {};
             columns.forEach((column, index) => {
                 record[column] = cleanCellValue(row[index]);
             });
             return record;
         });
+
+        if (!records.length) {
+            throw new Error('No data rows were found below the header row.');
+        }
 
         return {
             filename: file.name,
@@ -206,11 +154,6 @@ document.addEventListener('DOMContentLoaded', () => {
             seen[baseHeader] = count + 1;
             return count ? `${baseHeader}_${count + 1}` : baseHeader;
         });
-    }
-
-    function cleanCellValue(value) {
-        if (value === null || value === undefined) return '';
-        return String(value).replace(ILLEGAL_CHARACTERS_RE, '').trim();
     }
 
     function showPreview(data) {
@@ -245,18 +188,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         previewSection.classList.add('hidden');
         statusSection.classList.remove('hidden');
-        progressBar.style.width = '35%';
+        setProgress(8, 'Checking columns...');
 
         try {
             await waitForPaint();
-            const result = auditRecords(currentData);
-            progressBar.style.width = '75%';
+            const result = await auditRecords(currentData, setProgress);
 
-            const reportBlob = buildExcelReport(result.rows, result.summaryData, result.finalColumns);
+            setProgress(84, 'Creating Excel report...');
+            const reportBlob = await buildExcelReport(result.rows, result.summaryData, result.finalColumns);
             if (downloadUrl) URL.revokeObjectURL(downloadUrl);
             downloadUrl = URL.createObjectURL(reportBlob);
 
-            progressBar.style.width = '100%';
+            setProgress(100, 'Audit complete.');
             showResults(result.stats);
 
             downloadBtn.onclick = () => {
@@ -268,172 +211,160 @@ document.addEventListener('DOMContentLoaded', () => {
                 link.remove();
             };
         } catch (err) {
-            alert(`Error processing data: ${err.message}`);
+            showError(`Processing stopped. ${err.message}`);
             resetApp();
         }
     }
 
-    function auditRecords(data) {
+    async function auditRecords(data, onProgress) {
         const { columns, records } = data;
-
-        const nameCol = findColumn(columns, ['name', 'candidate', 'full name']);
-        const mobileCol = findColumn(columns, ['mobile', 'phone', 'contact']);
-        const emailCol = findColumn(columns, ['email', 'mail']);
-        const resumeCol = findColumn(columns, ['resume', 'attached', 'cv']);
-        const genderCol = findColumn(columns, ['gender']);
-        const createdByCol = findColumn(columns, ['createdby', 'created by']);
-        const skillsCol = findColumn(columns, ['key_skills', 'key skills', 'skills']);
-        const designationCol = findColumn(columns, ['designation']);
-        const experienceCol = findColumn(columns, ['total_experi', 'total experi', 'experience']);
-        const locationCol = findColumn(columns, ['current_loca', 'current loca', 'location', 'city']);
+        const cols = resolveColumns(columns);
+        validateColumnCoverage(cols);
 
         const mobileCounts = {};
         const emailCounts = {};
+        const totalRecords = records.length || 1;
 
-        records.forEach((row) => {
-            if (mobileCol) {
-                const extracted = cleanPhoneNumbers(row[mobileCol]).numbers;
-                extracted.forEach((mobile) => {
-                    mobileCounts[mobile] = (mobileCounts[mobile] || 0) + 1;
-                });
+        for (let start = 0; start < records.length; start += PROCESSING_CHUNK_SIZE) {
+            const end = Math.min(start + PROCESSING_CHUNK_SIZE, records.length);
+            for (let index = start; index < end; index += 1) {
+                const row = records[index];
+
+                if (cols.mobile) {
+                    const extracted = cleanPhoneNumbers(row[cols.mobile]).numbers;
+                    extracted.forEach((mobile) => {
+                        mobileCounts[mobile] = (mobileCounts[mobile] || 0) + 1;
+                    });
+                }
+
+                if (cols.email) {
+                    const email = cleanCellValue(row[cols.email]).toLowerCase();
+                    if (email) emailCounts[email] = (emailCounts[email] || 0) + 1;
+                }
             }
 
-            if (emailCol) {
-                const email = cleanCellValue(row[emailCol]).toLowerCase();
-                if (email) emailCounts[email] = (emailCounts[email] || 0) + 1;
-            }
-        });
+            const percent = 12 + Math.round((end / totalRecords) * 20);
+            onProgress(percent, `Scanning duplicates... ${end.toLocaleString()} / ${records.length.toLocaleString()}`);
+            await waitForPaint();
+        }
 
         const outputRows = [];
         let maxMobiles = 0;
         let totalValid = 0;
         let totalErrors = 0;
 
-        records.forEach((row) => {
-            const rowErrors = [];
-            const rowCopy = { ...row };
+        for (let start = 0; start < records.length; start += PROCESSING_CHUNK_SIZE) {
+            const end = Math.min(start + PROCESSING_CHUNK_SIZE, records.length);
 
-            if (isFullyBlank(row)) {
-                rowCopy['Name Check'] = 'Blank';
-                rowCopy['Mobile Check'] = 'Blank';
-                rowCopy['Email Check'] = 'Blank';
-                if (resumeCol) rowCopy['Resume Check'] = 'Blank';
-                if (genderCol) rowCopy['Gender Check'] = 'Blank';
-                if (createdByCol) rowCopy['CreatedBy Check'] = 'Blank';
-                if (skillsCol) rowCopy['Skills Check'] = 'Blank';
-                if (designationCol) rowCopy['Designation Check'] = 'Blank';
-                if (experienceCol) rowCopy['Experience Check'] = 'Blank';
-                if (locationCol) rowCopy['Location Check'] = 'Blank';
-                rowCopy._tempMobiles = [];
-                rowCopy['All Errors'] = 'Fully Blank Record';
+            for (let index = start; index < end; index += 1) {
+                const row = records[index];
+                const rowErrors = [];
+                const rowCopy = { ...row };
+
+                if (isFullyBlank(row)) {
+                    markFullyBlankRow(rowCopy, cols);
+                    outputRows.push(rowCopy);
+                    totalErrors += 1;
+                    continue;
+                }
+
+                const nameIssue = isIrrelevantName(cols.name ? row[cols.name] : '');
+                if (nameIssue) rowErrors.push(`Name: ${nameIssue}`);
+
+                const mobileResult = cleanPhoneNumbers(cols.mobile ? row[cols.mobile] : '');
+                let mobileIssue = mobileResult.issue;
+                const finalMobiles = [];
+
+                mobileResult.numbers.forEach((mobile) => {
+                    if ((mobileCounts[mobile] || 0) > 1) {
+                        rowErrors.push(`Mobile Duplicate (${mobile})`);
+                        mobileIssue = 'Contains Duplicate';
+                    } else {
+                        finalMobiles.push(mobile);
+                    }
+                });
+
+                if (mobileIssue && !String(mobileIssue).includes('Duplicate')) {
+                    rowErrors.push(`Mobile: ${mobileIssue}`);
+                }
+
+                maxMobiles = Math.max(maxMobiles, finalMobiles.length);
+
+                const emailValue = cols.email ? row[cols.email] : '';
+                let emailIssue = validateEmailFormat(emailValue);
+                const normalizedEmail = cleanCellValue(emailValue).toLowerCase();
+                if (!emailIssue && normalizedEmail && (emailCounts[normalizedEmail] || 0) > 1) {
+                    emailIssue = 'Duplicate';
+                }
+
+                if (emailIssue) rowErrors.push(`Email: ${emailIssue}`);
+
+                let resumeIssue = null;
+                if (cols.resume) {
+                    const resumeValue = normalizeTerm(row[cols.resume]);
+                    if (MISSING_VALUES.has(resumeValue)) {
+                        resumeIssue = 'Missing';
+                        rowErrors.push('Resume Missing');
+                    }
+                }
+
+                rowCopy['Name Check'] = nameIssue || 'Valid';
+                rowCopy['Mobile Check'] = mobileIssue || 'Valid';
+                rowCopy['Email Check'] = emailIssue || 'Valid';
+                if (cols.resume) rowCopy['Resume Check'] = resumeIssue || 'Valid';
+
+                [
+                    ['Gender', cols.gender],
+                    ['CreatedBy', cols.createdBy],
+                    ['Skills', cols.skills],
+                    ['Designation', cols.designation],
+                    ['Experience', cols.experience],
+                    ['Location', cols.location]
+                ].forEach(([label, column]) => {
+                    if (!column) return;
+                    const value = normalizeTerm(row[column]);
+                    if (MISSING_VALUES.has(value)) {
+                        rowErrors.push(`${label} Missing`);
+                        rowCopy[`${label} Check`] = 'Blank';
+                    } else {
+                        rowCopy[`${label} Check`] = 'Valid';
+                    }
+                });
+
+                rowCopy._tempMobiles = finalMobiles;
+                rowCopy['All Errors'] = rowErrors.length ? rowErrors.join(' | ') : 'Clean Record';
+
+                if (rowErrors.length) {
+                    totalErrors += 1;
+                } else {
+                    totalValid += 1;
+                }
+
                 outputRows.push(rowCopy);
-                totalErrors += 1;
-                return;
             }
 
-            const nameValue = nameCol ? row[nameCol] : '';
-            const nameIssue = isIrrelevantName(nameValue);
-            if (nameIssue) rowErrors.push(`Name: ${nameIssue}`);
-
-            const mobileResult = cleanPhoneNumbers(mobileCol ? row[mobileCol] : '');
-            let mobileIssue = mobileResult.issue;
-            const finalMobiles = [];
-
-            mobileResult.numbers.forEach((mobile) => {
-                if ((mobileCounts[mobile] || 0) > 1) {
-                    rowErrors.push(`Mobile Duplicate (${mobile})`);
-                    mobileIssue = 'Contains Duplicate';
-                } else {
-                    finalMobiles.push(mobile);
-                }
-            });
-
-            if (mobileIssue && !String(mobileIssue).includes('Duplicate')) {
-                rowErrors.push(`Mobile: ${mobileIssue}`);
-            }
-
-            maxMobiles = Math.max(maxMobiles, finalMobiles.length);
-
-            const emailValue = emailCol ? row[emailCol] : '';
-            let emailIssue = validateEmailFormat(emailValue);
-            const normalizedEmail = cleanCellValue(emailValue).toLowerCase();
-            if (!emailIssue && normalizedEmail && (emailCounts[normalizedEmail] || 0) > 1) {
-                emailIssue = 'Duplicate';
-            }
-
-            if (emailIssue) rowErrors.push(`Email: ${emailIssue}`);
-
-            let resumeIssue = null;
-            if (resumeCol) {
-                const resumeValue = cleanCellValue(row[resumeCol]).toLowerCase();
-                if (['no', 'n', '', 'null', 'none', 'nan'].includes(resumeValue)) {
-                    resumeIssue = 'Missing';
-                    rowErrors.push('Resume Missing');
-                }
-            }
-
-            rowCopy['Name Check'] = nameIssue || 'Valid';
-            rowCopy['Mobile Check'] = mobileIssue || 'Valid';
-            rowCopy['Email Check'] = emailIssue || 'Valid';
-            if (resumeCol) rowCopy['Resume Check'] = resumeIssue || 'Valid';
-
-            [
-                ['Gender', genderCol],
-                ['CreatedBy', createdByCol],
-                ['Skills', skillsCol],
-                ['Designation', designationCol],
-                ['Experience', experienceCol],
-                ['Location', locationCol]
-            ].forEach(([label, column]) => {
-                if (!column) return;
-                const value = cleanCellValue(row[column]).toLowerCase();
-                if (['', 'nan', 'null', 'none', 'n/a'].includes(value)) {
-                    rowErrors.push(`${label} Missing`);
-                    rowCopy[`${label} Check`] = 'Blank';
-                } else {
-                    rowCopy[`${label} Check`] = 'Valid';
-                }
-            });
-
-            rowCopy._tempMobiles = finalMobiles;
-            rowCopy['All Errors'] = rowErrors.length ? rowErrors.join(' | ') : 'Clean Record';
-
-            if (rowErrors.length) {
-                totalErrors += 1;
-            } else {
-                totalValid += 1;
-            }
-
-            outputRows.push(rowCopy);
-        });
-
-        const specialColumns = [
-            'Name Check',
-            'Mobile Check',
-            'Email Check'
-        ];
-
-        if (resumeCol) specialColumns.push('Resume Check');
-        if (genderCol) specialColumns.push('Gender Check');
-        if (createdByCol) specialColumns.push('CreatedBy Check');
-        if (skillsCol) specialColumns.push('Skills Check');
-        if (designationCol) specialColumns.push('Designation Check');
-        if (experienceCol) specialColumns.push('Experience Check');
-        if (locationCol) specialColumns.push('Location Check');
-
-        for (let index = 0; index < maxMobiles; index += 1) {
-            specialColumns.push(maxMobiles > 1 ? `Cleaned Mobile ${index + 1}` : 'Cleaned Mobile No');
+            const percent = 35 + Math.round((end / totalRecords) * 38);
+            onProgress(percent, `Validating records... ${end.toLocaleString()} / ${records.length.toLocaleString()}`);
+            await waitForPaint();
         }
-        specialColumns.push('All Errors');
 
-        outputRows.forEach((row) => {
-            const mobiles = row._tempMobiles || [];
-            delete row._tempMobiles;
-            for (let index = 0; index < maxMobiles; index += 1) {
-                const column = maxMobiles > 1 ? `Cleaned Mobile ${index + 1}` : 'Cleaned Mobile No';
-                row[column] = mobiles[index] || '';
+        const specialColumns = buildSpecialColumns(cols, maxMobiles);
+
+        for (let start = 0; start < outputRows.length; start += PROCESSING_CHUNK_SIZE) {
+            const end = Math.min(start + PROCESSING_CHUNK_SIZE, outputRows.length);
+            for (let index = start; index < end; index += 1) {
+                const row = outputRows[index];
+                const mobiles = row._tempMobiles || [];
+                delete row._tempMobiles;
+
+                for (let mobileIndex = 0; mobileIndex < maxMobiles; mobileIndex += 1) {
+                    const column = maxMobiles > 1 ? `Cleaned Mobile ${mobileIndex + 1}` : 'Cleaned Mobile No';
+                    row[column] = mobiles[mobileIndex] || '';
+                }
             }
-        });
+            onProgress(74 + Math.round((end / totalRecords) * 6), 'Preparing report columns...');
+            await waitForPaint();
+        }
 
         const finalColumns = [
             ...columns.filter((column) => !specialColumns.includes(column)),
@@ -454,6 +385,61 @@ document.addEventListener('DOMContentLoaded', () => {
                 breakdown
             }
         };
+    }
+
+    function resolveColumns(columns) {
+        return {
+            name: findColumn(columns, COLUMN_ALIASES.name || ['name', 'candidate', 'full name']),
+            mobile: findColumn(columns, COLUMN_ALIASES.mobile || ['mobile', 'phone', 'contact']),
+            email: findColumn(columns, COLUMN_ALIASES.email || ['email', 'mail']),
+            resume: findColumn(columns, COLUMN_ALIASES.resume || ['resume', 'attached', 'cv']),
+            gender: findColumn(columns, COLUMN_ALIASES.gender || ['gender']),
+            createdBy: findColumn(columns, COLUMN_ALIASES.createdBy || ['createdby', 'created by']),
+            skills: findColumn(columns, COLUMN_ALIASES.skills || ['key_skills', 'key skills', 'skills']),
+            designation: findColumn(columns, COLUMN_ALIASES.designation || ['designation']),
+            experience: findColumn(columns, COLUMN_ALIASES.experience || ['total_experi', 'total experi', 'experience']),
+            location: findColumn(columns, COLUMN_ALIASES.location || ['current_loca', 'current loca', 'location', 'city'])
+        };
+    }
+
+    function validateColumnCoverage(cols) {
+        if (!cols.name && !cols.mobile && !cols.email) {
+            throw new Error('Could not find Name, Mobile, or Email columns. Please check the header row.');
+        }
+    }
+
+    function markFullyBlankRow(rowCopy, cols) {
+        rowCopy['Name Check'] = 'Blank';
+        rowCopy['Mobile Check'] = 'Blank';
+        rowCopy['Email Check'] = 'Blank';
+        if (cols.resume) rowCopy['Resume Check'] = 'Blank';
+        if (cols.gender) rowCopy['Gender Check'] = 'Blank';
+        if (cols.createdBy) rowCopy['CreatedBy Check'] = 'Blank';
+        if (cols.skills) rowCopy['Skills Check'] = 'Blank';
+        if (cols.designation) rowCopy['Designation Check'] = 'Blank';
+        if (cols.experience) rowCopy['Experience Check'] = 'Blank';
+        if (cols.location) rowCopy['Location Check'] = 'Blank';
+        rowCopy._tempMobiles = [];
+        rowCopy['All Errors'] = 'Fully Blank Record';
+    }
+
+    function buildSpecialColumns(cols, maxMobiles) {
+        const specialColumns = ['Name Check', 'Mobile Check', 'Email Check'];
+
+        if (cols.resume) specialColumns.push('Resume Check');
+        if (cols.gender) specialColumns.push('Gender Check');
+        if (cols.createdBy) specialColumns.push('CreatedBy Check');
+        if (cols.skills) specialColumns.push('Skills Check');
+        if (cols.designation) specialColumns.push('Designation Check');
+        if (cols.experience) specialColumns.push('Experience Check');
+        if (cols.location) specialColumns.push('Location Check');
+
+        for (let index = 0; index < maxMobiles; index += 1) {
+            specialColumns.push(maxMobiles > 1 ? `Cleaned Mobile ${index + 1}` : 'Cleaned Mobile No');
+        }
+
+        specialColumns.push('All Errors');
+        return specialColumns;
     }
 
     function cleanPhoneNumbers(mobileValue) {
@@ -493,7 +479,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function isIrrelevantName(name) {
         if (isBlankValue(name)) return 'Blank';
 
-        const nameString = cleanCellValue(name).toLowerCase();
+        const rawName = cleanCellValue(name);
+        const nameString = rawName.toLowerCase();
         if (nameString.length < 2) return 'Too Short';
         if (nameString.includes('@')) return 'Contains Email';
         if (['?', '!', '*', '#', '$', '%'].some((char) => nameString.includes(char))) {
@@ -502,18 +489,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (nameString.replace(/\s/g, '').match(/^\d+$/)) return 'Numeric Name';
         if (RE_NAME_STARTS_WITH_NUM.test(nameString)) return 'Starts with Number';
         if (RE_NAME_SPAM.test(nameString)) return 'Spam Name';
+        if (IRRELEVANT_NAME_TERMS.has(nameString)) return 'Irrelevant Term';
+        if (findRoleProfileMatch(rawName)) return ROLE_PROFILE_RESULT_LABEL;
 
-        const irrelevantTerms = new Set([
-            'test', 'abc', 'xyz', 'na', 'n/a', 'unknown', 'null',
-            'none', '---', '...', '.', 'dummy'
-        ]);
-        if (irrelevantTerms.has(nameString)) return 'Irrelevant Term';
+        return null;
+    }
 
-        const roleProfileMatch = nameString.match(NAME_ROLE_PROFILE_RE);
-        if (roleProfileMatch) {
-            return 'Contains Designation/Profile/Role/Industry';
+    function findRoleProfileMatch(rawName) {
+        const nameString = rawName.toLowerCase();
+        for (const match of nameString.matchAll(NAME_ROLE_PROFILE_RE)) {
+            const matchedTerm = normalizeTerm(match[2]);
+            if (!IGNORED_ROLE_PROFILE_TERMS.has(matchedTerm)) {
+                return matchedTerm;
+            }
         }
-
         return null;
     }
 
@@ -531,22 +520,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!RE_EMAIL_FORMAT.test(emailString)) return 'Invalid Format';
 
         return null;
-    }
-
-    function findColumn(columns, possibleNames) {
-        return columns.find((column) => {
-            const lowerColumn = column.toLowerCase();
-            return possibleNames.some((name) => lowerColumn.includes(name.toLowerCase()));
-        }) || null;
-    }
-
-    function isFullyBlank(row) {
-        return Object.values(row).every((value) => cleanCellValue(value) === '');
-    }
-
-    function isBlankValue(value) {
-        const normalized = cleanCellValue(value).toLowerCase();
-        return normalized === '' || normalized === 'nan';
     }
 
     function buildBreakdown(rows, specialColumns) {
@@ -573,7 +546,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         Object.entries(breakdown).forEach(([metric, counts]) => {
             summaryData.push({ Metric: `--- ${metric} Breakdown ---`, Count: '' });
-            Object.entries(counts).forEach(([status, count]) => {
+            sortBreakdownEntries(counts).forEach(([status, count]) => {
                 summaryData.push({ Metric: `  - ${status}`, Count: count });
             });
             summaryData.push({ Metric: '', Count: '' });
@@ -582,7 +555,41 @@ document.addEventListener('DOMContentLoaded', () => {
         return summaryData;
     }
 
-    function buildExcelReport(rows, summaryData, finalColumns) {
+    async function buildExcelReport(rows, summaryData, finalColumns) {
+        if (window.ExcelJS) {
+            const workbook = new ExcelJS.Workbook();
+            workbook.creator = 'EaseBiz RecruitGuard';
+            workbook.created = new Date();
+
+            addExcelWorksheet(workbook, 'Audit Summary', summaryData, ['Metric', 'Count']);
+            addExcelWorksheet(workbook, 'Audited Data', rows, finalColumns);
+
+            const buffer = await workbook.xlsx.writeBuffer();
+            return new Blob([buffer], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            });
+        }
+
+        return buildSheetJsExcelReport(rows, summaryData, finalColumns);
+    }
+
+    function addExcelWorksheet(workbook, sheetName, rows, columns) {
+        const worksheet = workbook.addWorksheet(sheetName, {
+            views: [{ state: 'frozen', ySplit: 1 }]
+        });
+
+        worksheet.columns = columns.map((column) => ({
+            header: column,
+            key: column,
+            width: computeColumnWidth(rows, column)
+        }));
+
+        rows.forEach((row) => {
+            worksheet.addRow(columns.map((column) => cleanCellValue(row[column])));
+        });
+    }
+
+    function buildSheetJsExcelReport(rows, summaryData, finalColumns) {
         const workbook = XLSX.utils.book_new();
         const summarySheet = XLSX.utils.json_to_sheet(summaryData, {
             header: ['Metric', 'Count']
@@ -590,6 +597,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const auditedSheet = XLSX.utils.json_to_sheet(rows, {
             header: finalColumns
         });
+
+        summarySheet['!cols'] = buildSheetJsWidths(summaryData, ['Metric', 'Count']);
+        auditedSheet['!cols'] = buildSheetJsWidths(rows, finalColumns);
+        summarySheet['!freeze'] = { xSplit: 0, ySplit: 1, topLeftCell: 'A2', activePane: 'bottomLeft', state: 'frozen' };
+        auditedSheet['!freeze'] = { xSplit: 0, ySplit: 1, topLeftCell: 'A2', activePane: 'bottomLeft', state: 'frozen' };
 
         XLSX.utils.book_append_sheet(workbook, summarySheet, 'Audit Summary');
         XLSX.utils.book_append_sheet(workbook, auditedSheet, 'Audited Data');
@@ -611,6 +623,8 @@ document.addEventListener('DOMContentLoaded', () => {
         statTotal.textContent = stats.total;
         statIssues.textContent = stats.errors;
 
+        renderIssueSummary(stats);
+
         breakdownGrid.innerHTML = '';
         Object.entries(stats.breakdown).forEach(([metric, counts]) => {
             const card = document.createElement('div');
@@ -621,7 +635,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.appendChild(title);
 
             const list = document.createElement('ul');
-            Object.entries(counts).forEach(([key, value]) => {
+            sortBreakdownEntries(counts).forEach(([key, value]) => {
                 const li = document.createElement('li');
                 const statusClass = getStatusClass(key);
 
@@ -645,11 +659,95 @@ document.addEventListener('DOMContentLoaded', () => {
         breakdownSection.classList.toggle('hidden', !Object.keys(stats.breakdown).length);
     }
 
+    function renderIssueSummary(stats) {
+        issueSummary.innerHTML = '';
+
+        const cleanRecords = Math.max(stats.total - stats.errors, 0);
+        const issueRate = stats.total ? Math.round((stats.errors / stats.total) * 100) : 0;
+        const topIssues = collectTopIssues(stats.breakdown);
+
+        issueSummary.appendChild(createIssueChip('Clean Records', cleanRecords.toLocaleString(), 'Rows without validation errors'));
+        issueSummary.appendChild(createIssueChip('Issue Rate', `${issueRate}%`, `${stats.errors.toLocaleString()} records need review`));
+
+        if (topIssues.length) {
+            const topIssue = topIssues[0];
+            issueSummary.appendChild(createIssueChip('Top Issue', topIssue.count.toLocaleString(), `${topIssue.metric}: ${topIssue.status}`));
+        }
+
+        issueSummary.classList.remove('hidden');
+    }
+
+    function collectTopIssues(breakdown) {
+        const issues = [];
+        Object.entries(breakdown).forEach(([metric, counts]) => {
+            Object.entries(counts).forEach(([status, count]) => {
+                if (status === 'Valid') return;
+                issues.push({ metric, status, count });
+            });
+        });
+
+        return issues.sort((left, right) => right.count - left.count).slice(0, 3);
+    }
+
+    function createIssueChip(label, value, detail) {
+        const chip = document.createElement('div');
+        chip.className = 'issue-chip';
+
+        const labelEl = document.createElement('span');
+        labelEl.textContent = label;
+
+        const valueEl = document.createElement('strong');
+        valueEl.textContent = value;
+
+        const detailEl = document.createElement('p');
+        detailEl.textContent = detail;
+
+        chip.appendChild(labelEl);
+        chip.appendChild(valueEl);
+        chip.appendChild(detailEl);
+        return chip;
+    }
+
+    function sortBreakdownEntries(counts) {
+        return Object.entries(counts).sort(([leftStatus, leftCount], [rightStatus, rightCount]) => {
+            if (leftStatus === 'Valid') return -1;
+            if (rightStatus === 'Valid') return 1;
+            if (leftStatus === 'Blank') return -1;
+            if (rightStatus === 'Blank') return 1;
+            return rightCount - leftCount;
+        });
+    }
+
     function getStatusClass(status) {
         const normalized = status.toLowerCase();
-        if (normalized.includes('valid')) return 'status-valid';
-        if (normalized.includes('blank')) return 'status-blank';
+        if (normalized === 'valid') return 'status-valid';
+        if (normalized === 'blank' || normalized.includes('missing')) return 'status-blank';
         return 'status-error';
+    }
+
+    function findColumn(columns, possibleNames) {
+        return columns.find((column) => {
+            const lowerColumn = column.toLowerCase();
+            return possibleNames.some((name) => lowerColumn.includes(name.toLowerCase()));
+        }) || null;
+    }
+
+    function isFullyBlank(row) {
+        return Object.values(row).every((value) => cleanCellValue(value) === '');
+    }
+
+    function isBlankValue(value) {
+        const normalized = normalizeTerm(value);
+        return normalized === '' || normalized === 'nan';
+    }
+
+    function cleanCellValue(value) {
+        if (value === null || value === undefined) return '';
+        return String(value).replace(ILLEGAL_CHARACTERS_RE, '').trim();
+    }
+
+    function normalizeTerm(value) {
+        return cleanCellValue(value).toLowerCase();
     }
 
     function reorderRow(row, columns) {
@@ -662,20 +760,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function buildNameRoleProfileRegex() {
         const escapedTerms = [...new Set(NAME_ROLE_PROFILE_TERMS)]
+            .filter((term) => !IGNORED_ROLE_PROFILE_TERMS.has(normalizeTerm(term)))
             .sort((a, b) => b.length - a.length)
             .map(escapeRegex);
-        return new RegExp(`(^|[^a-z0-9])(${escapedTerms.join('|')})(?=$|[^a-z0-9])`, 'i');
+
+        if (!escapedTerms.length) {
+            return /$a/g;
+        }
+
+        return new RegExp(`(^|[^a-z0-9])(${escapedTerms.join('|')})(?=$|[^a-z0-9])`, 'gi');
     }
 
-    function formatNameKeyword(keyword) {
-        return keyword.trim().split(/(\W+)/).map((part) => {
-            return NAME_KEYWORD_ACRONYMS.has(part.toLowerCase()) ? part.toUpperCase() : toTitleCase(part);
-        }).join('');
+    function computeColumnWidth(rows, column) {
+        let maxLength = cleanCellValue(column).length;
+        const sampleSize = Math.min(rows.length, 5000);
+
+        for (let index = 0; index < sampleSize; index += 1) {
+            maxLength = Math.max(maxLength, cleanCellValue(rows[index][column]).length);
+        }
+
+        return clamp(maxLength + 2, 12, 48);
     }
 
-    function toTitleCase(value) {
-        if (!value) return value;
-        return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+    function buildSheetJsWidths(rows, columns) {
+        return columns.map((column) => ({ wch: computeColumnWidth(rows, column) }));
+    }
+
+    function setProgress(percent, message) {
+        progressBar.style.width = `${clamp(percent, 0, 100)}%`;
+        if (progressMessage) progressMessage.textContent = message;
+    }
+
+    function showError(message) {
+        console.error(message);
+        alert(message);
+    }
+
+    function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
     }
 
     function escapeRegex(value) {
@@ -687,7 +809,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function waitForPaint() {
-        return new Promise((resolve) => setTimeout(resolve, 50));
+        return new Promise((resolve) => setTimeout(resolve, 0));
     }
 
     function resetApp() {
@@ -698,9 +820,11 @@ document.addEventListener('DOMContentLoaded', () => {
         previewSection.classList.add('hidden');
         statusSection.classList.add('hidden');
         resultSection.classList.add('hidden');
+        issueSummary.classList.add('hidden');
         breakdownSection.classList.add('hidden');
-        progressBar.style.width = '0%';
+        setProgress(0, 'Preparing audit...');
         breakdownGrid.innerHTML = '';
+        issueSummary.innerHTML = '';
         downloadBtn.onclick = null;
 
         if (downloadUrl) {

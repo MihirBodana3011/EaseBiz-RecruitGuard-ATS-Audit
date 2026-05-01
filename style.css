@@ -470,6 +470,16 @@ tr:hover td {
     margin-top: 0.5rem;
 }
 
+.status-content .progress-message {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    text-shadow: none;
+    margin-top: 1rem;
+}
+
 @keyframes spin {
     0% {
         transform: rotate(0deg);
@@ -626,6 +636,52 @@ tr:hover td {
     text-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
 }
 
+.issue-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0 0.5rem;
+    text-align: left;
+}
+
+.issue-summary.hidden {
+    display: none;
+}
+
+.issue-chip {
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+}
+
+.issue-chip span {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+}
+
+.issue-chip strong {
+    display: block;
+    color: var(--text-main);
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.45rem;
+    line-height: 1.1;
+}
+
+.issue-chip p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 0.35rem;
+    word-break: break-word;
+}
+
 footer {
     text-align: center;
     font-size: 0.9rem;
@@ -688,7 +744,8 @@ footer {
 .breakdown-card li {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    gap: 1rem;
     padding: 0.5rem 0;
     font-size: 0.95rem;
 }
@@ -697,6 +754,9 @@ footer {
     font-weight: 600;
     padding: 0.2rem 0.6rem;
     border-radius: 0.5rem;
+    line-height: 1.35;
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 .status-valid {
@@ -718,6 +778,8 @@ footer {
     font-family: 'Outfit', sans-serif;
     font-weight: 700;
     color: var(--text);
+    flex-shrink: 0;
+    padding-top: 0.2rem;
 }
 
 /* Responsive */

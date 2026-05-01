@@ -17,14 +17,19 @@ The audit runs fully in the browser. Candidate files are read locally by the bro
 - **Multi-Number Extraction**: Automatically splits multiple numbers in a single cell into separate columns.
 - **Name Role/Profile Detection**: Flags candidate names that contain designations, profiles, roles, or industries.
 - **Dynamic Checkpoints**: Automatically detects and validates columns like Gender, Skills, Designation, Experience, and Location.
-- **Detailed Audit Reports**: Generates a consolidated Excel report with a granular breakdown of every record.
-- **Premium UI**: Modern glassmorphic interface with real-time audit stats and breakdown cards.
+- **Detailed Audit Reports**: Generates a consolidated Excel report with frozen headers, fitted columns, and a granular breakdown of every record.
+- **Fast Browser Processing**: Processes large files in chunks so the interface stays responsive during long audits.
+- **Configurable Validation Rules**: Role/profile/industry terms live in `validation-rules.js` for easier updates and false-positive control.
+- **Premium UI**: Modern glassmorphic interface with real-time audit stats, top-issue summary, and breakdown cards.
 - **Crash-Proof**: Automatic filtering of illegal characters to prevent Excel file corruption.
 
 ## Tech Stack
-- **Hosted App**: Static HTML, CSS, JavaScript, SheetJS
+- **Hosted App**: Static HTML, CSS, JavaScript, local SheetJS, local ExcelJS
 - **Optional Local Backend**: Python, Flask, Pandas, Openpyxl
 - **Design**: Glassmorphism, 4D Aesthetics, Custom Animations
+
+## Validation Rules
+Edit `validation-rules.js` to update role/profile/industry terms or add terms to `ignoredRoleProfileTerms` when a keyword creates false positives.
 
 ## GitHub Pages Deployment
 This repository includes a GitHub Actions workflow that deploys the static app from the `master` branch to GitHub Pages.
